@@ -6,10 +6,29 @@ const TaskSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please provide title"],
       maxlength: 50,
+      trim: true,
     },
     completed: {
-      type: Boolean,
-      default: false,
+      type: String,
+      enum: ["Pending", "In Progress", "Completed"],
+      default: "Pending",
+    },
+    description: {
+      type: String,
+      trim: true,
+      maxlength: 100,
+    },
+    deadline: {
+      type: Date,
+      validate: {
+        validator: function (value) {
+          const currentDate = new Date().setHours(0, 0, 0, 0);
+          const inputDate = new Date(value).setHours(0, 0, 0, 0);
+          return inputDate >= currentDate;
+        },
+        message:
+          "Please provide a valid deadline (dd-mm-yyyy) greater than or equal to today",
+      },
     },
     createdBy: {
       type: mongoose.Types.ObjectId,
